@@ -14,7 +14,7 @@ public class ConnectionPool {
         try {
             Class.forName("org.postgresql.Driver");
 
-            Dotenv dotenv = Dotenv.load();
+            Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
 
             HikariConfig config = new HikariConfig();
             config.setJdbcUrl(dotenv.get("DB_URL"));
