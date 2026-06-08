@@ -55,6 +55,7 @@ Thumbs.db
 
 # Node (caso use futuramente no front-end)
 node_modules/
+dist/
 npm-debug.log
 
 # Env files
