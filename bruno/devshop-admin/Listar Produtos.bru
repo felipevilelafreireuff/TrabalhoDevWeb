@@ -1,0 +1,22 @@
+meta {
+  name: Listar Produtos
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/admin
+  body: none
+  auth: none
+}
+
+tests {
+  test("deve retornar status 200", function() {
+    expect(res.status).to.equal(200);
+  });
+
+  test("deve retornar lista de produtos com sucesso", function() {
+    expect(res.body.success).to.equal(true);
+    expect(res.body.produtos).to.be.an('array');
+  });
+}

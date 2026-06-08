@@ -1,0 +1,34 @@
+meta {
+  name: Atualizar Produto
+  type: http
+  seq: 3
+}
+
+put {
+  url: {{baseUrl}}/admin
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "id": {{createdProductId}},
+    "nome": "Teclado Mecânico Gamer Razer - Pro Edition",
+    "descricao": "Switch Green tátil e sonoro com Keycaps Doubleshot PBT.",
+    "preco": 749.90,
+    "categoria": "perifericos",
+    "imagemUrl": "https://placehold.co/400x300/1E3A5F/ffffff?text=Teclado+Razer+Pro"
+  }
+}
+
+tests {
+  test("deve atualizar produto com sucesso", function() {
+    expect(res.status).to.equal(200);
+    expect(res.body.success).to.equal(true);
+    expect(res.body.produto.nome).to.equal("Teclado Mecânico Gamer Razer - Pro Edition");
+  });
+}

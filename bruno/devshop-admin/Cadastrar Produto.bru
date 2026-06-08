@@ -1,0 +1,34 @@
+meta {
+  name: Cadastrar Produto
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/admin
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "nome": "Teclado Mecânico Gamer Razer",
+    "descricao": "Switch Green tátil e sonoro, iluminação RGB Chroma.",
+    "preco": 699.90,
+    "categoria": "perifericos",
+    "imagemUrl": "https://placehold.co/400x300/1E3A5F/ffffff?text=Teclado+Razer"
+  }
+}
+
+tests {
+  test("deve cadastrar produto com sucesso", function() {
+    expect(res.status).to.equal(201);
+    expect(res.body.success).to.equal(true);
+    expect(res.body.produto.id).to.be.a('number');
+    bru.setVar("createdProductId", res.body.produto.id);
+  });
+}
