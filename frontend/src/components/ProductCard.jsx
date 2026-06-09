@@ -1,6 +1,6 @@
 import Button from "./Button.jsx";
 
-export default function ProductCard({ product }) {
+export default function ProductCard({ product, onAddToCart }) {
   return (
     <article className="product-card">
       <div className="product-thumb">
@@ -20,12 +20,12 @@ export default function ProductCard({ product }) {
           <p className="product-description">{product.descricao}</p>
         ) : null}
         <div className="product-stars">
-          ****<span>*</span> <span>(10)</span>
+          ★★★★<span>★</span> <span>(10)</span>
         </div>
         <div className="product-price-wrap">
           <div className="product-price">{formatCurrency(product.preco)}</div>
         </div>
-        <Button fullWidth type="button">
+        <Button fullWidth type="button" onClick={() => onAddToCart && onAddToCart(product)}>
           Adicionar
         </Button>
       </div>

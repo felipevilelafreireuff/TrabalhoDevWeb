@@ -1,5 +1,6 @@
 import { LoaderCircle, PackageCheck } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import Button from "../components/Button.jsx";
 import CategoryFilter from "../components/CategoryFilter.jsx";
 import Footer from "../components/Footer.jsx";
@@ -8,7 +9,14 @@ import ProductCard from "../components/ProductCard.jsx";
 import StatusMessage from "../components/StatusMessage.jsx";
 import { getProducts } from "../services/productService.js";
 
-export default function Home({ auth, onLogout, onNavigateLogin }) {
+export default function Home({
+  auth,
+  onLogout,
+  searchQuery,
+  onSearchChange,
+  cartItemsCount,
+  onAddToCart
+}) {
   const [categoria, setCategoria] = useState("todos");
   const [products, setProducts] = useState([]);
   const [error, setError] = useState("");
@@ -39,16 +47,29 @@ export default function Home({ auth, onLogout, onNavigateLogin }) {
     };
   }, [categoria]);
 
+  const filteredProducts = useMemo(() => {
+    if (!searchQuery || !searchQuery.trim()) {
+      return products;
+    }
+    const query = searchQuery.toLowerCase().trim();
+    return products.filter(
+      (product) =>
+        product.nome.toLowerCase().includes(query) ||
+        (product.descricao && product.descricao.toLowerCase().includes(query))
+    );
+  }, [products, searchQuery]);
+
   const heroProduct = useMemo(() => products[0], [products]);
 
   return (
     <>
-      <Topbar auth={auth} onNavigateLogin={onNavigateLogin} />
+      <Topbar auth={auth} />
       <Navbar
         auth={auth}
         onLogout={onLogout}
-        onNavigateHome={() => setCategoria("todos")}
-        onNavigateLogin={onNavigateLogin}
+        searchQuery={searchQuery}
+        onSearchChange={onSearchChange}
+        cartItemsCount={cartItemsCount}
       />
 
       <section className="hero">
@@ -67,9 +88,9 @@ export default function Home({ auth, onLogout, onNavigateLogin }) {
                 Ver ofertas
               </a>
               {!auth.authenticated ? (
-                <Button variant="ghostLight" onClick={onNavigateLogin}>
+                <Link className="btn btn-ghostLight" to="/login">
                   Criar conta
-                </Button>
+                </Link>
               ) : null}
             </div>
             <div className="hero-stats">
@@ -109,14 +130,18 @@ export default function Home({ auth, onLogout, onNavigateLogin }) {
                 <h2>Produtos em destaque</h2>
               </div>
               <span className="section-count">
-                {isLoading ? "Carregando" : `${products.length} produtos`}
+                {isLoading ? "Carregando" : `${filteredProducts.length} produtos`}
               </span>
             </div>
             <hr className="section-divider" />
 
             <CategoryFilter
               currentCategory={categoria}
-              onChange={setCategoria}
+              onChange={(cat) => {
+                setCategoria(cat);
+                // Clear search when category changes for better UX
+                if (onSearchChange) onSearchChange("");
+              }}
             />
 
             <StatusMessage type="error">{error}</StatusMessage>
@@ -126,16 +151,20 @@ export default function Home({ auth, onLogout, onNavigateLogin }) {
                 <LoaderCircle className="spin" size={28} />
                 <p>Buscando produtos na API...</p>
               </div>
-            ) : products.length > 0 ? (
+            ) : filteredProducts.length > 0 ? (
               <div className="products-grid">
-                {products.map((product) => (
-                  <ProductCard key={product.id} product={product} />
+                {filteredProducts.map((product) => (
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    onAddToCart={onAddToCart}
+                  />
                 ))}
               </div>
             ) : (
               <div className="empty-state">
                 <PackageCheck size={30} />
-                <p>Nenhum produto encontrado para esta categoria.</p>
+                <p>Nenhum produto encontrado para esta busca ou categoria.</p>
               </div>
             )}
           </div>
@@ -147,7 +176,7 @@ export default function Home({ auth, onLogout, onNavigateLogin }) {
   );
 }
 
-function Topbar({ auth, onNavigateLogin }) {
+function Topbar({ auth }) {
   return (
     <div className="topbar">
       <div className="container">
@@ -158,9 +187,9 @@ function Topbar({ auth, onNavigateLogin }) {
           ) : auth.authenticated ? (
             <span>Ola, {auth.usuario?.nome || auth.usuario?.email}</span>
           ) : (
-            <button className="topbar-link" onClick={onNavigateLogin} type="button">
+            <Link className="topbar-link" to="/login">
               Entrar
-            </button>
+            </Link>
           )}
         </div>
       </div>
@@ -180,3 +209,4 @@ function formatCurrency(value) {
     currency: "BRL"
   }).format(price);
 }
+
