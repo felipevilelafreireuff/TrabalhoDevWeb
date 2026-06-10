@@ -3,13 +3,15 @@ import { Link } from "react-router-dom";
 import Button from "../components/Button.jsx";
 import Footer from "../components/Footer.jsx";
 import Navbar from "../components/Navbar.jsx";
+import StatusMessage from "../components/StatusMessage.jsx";
 
 export default function Carrinho({
   auth,
   onLogout,
   cartItems,
   onUpdateQuantity,
-  onRemoveItem
+  onRemoveItem,
+  cartFeedback
 }) {
   const subtotal = cartItems.reduce(
     (acc, item) => acc + Number(item.product.preco) * item.quantity,
@@ -31,6 +33,7 @@ export default function Carrinho({
           <div className="cart-layout">
             <div>
               <h2 className="cart-section-title">Meu Carrinho</h2>
+              <StatusMessage type="error">{cartFeedback}</StatusMessage>
 
               {cartItems.length === 0 ? (
                 <div className="cart-empty">

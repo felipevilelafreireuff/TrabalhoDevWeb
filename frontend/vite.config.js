@@ -7,6 +7,7 @@ export default defineConfig(({ mode }) => {
   const backendContext = env.VITE_BACKEND_CONTEXT || "/devshop";
 
   return {
+    base: mode === "production" ? env.VITE_BASE_PATH || "/TrabalhoDevWeb/" : "/",
     plugins: [react()],
     server: {
       port: 5173,
@@ -14,6 +15,9 @@ export default defineConfig(({ mode }) => {
         "/api": {
           target: backendOrigin,
           changeOrigin: true,
+          cookiePathRewrite: {
+            [backendContext]: "/"
+          },
           rewrite: (path) => path.replace(/^\/api/, backendContext)
         }
       }

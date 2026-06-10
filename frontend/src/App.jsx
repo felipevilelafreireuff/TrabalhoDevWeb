@@ -5,6 +5,12 @@ import Admin from "./pages/Admin.jsx";
 import Carrinho from "./pages/Carrinho.jsx";
 import Home from "./pages/Home.jsx";
 import Login from "./pages/Login.jsx";
+import {
+  addToCart,
+  getCart,
+  removeCartItem,
+  updateCartItem
+} from "./services/cartService.js";
 import { getCurrentUser, logout } from "./services/authService.js";
 
 export default function App() {
@@ -14,6 +20,7 @@ export default function App() {
     usuario: null
   });
   const [cartItems, setCartItems] = useState([]);
+  const [cartFeedback, setCartFeedback] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
@@ -38,6 +45,24 @@ export default function App() {
     };
   }, []);
 
+  useEffect(() => {
+    let isMounted = true;
+
+    getCart()
+      .then((data) => {
+        if (!isMounted) return;
+        setCartItems(normalizeCartItems(data.items));
+      })
+      .catch(() => {
+        if (!isMounted) return;
+        setCartItems([]);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   async function handleLogout() {
     await logout();
     setAuth({ loading: false, authenticated: false, usuario: null });
@@ -47,36 +72,34 @@ export default function App() {
     setAuth({ loading: false, authenticated: true, usuario });
   }
 
-  function handleAddToCart(product) {
-    setCartItems((prev) => {
-      const existing = prev.find((item) => item.product.id === product.id);
-      if (existing) {
-        return prev.map((item) =>
-          item.product.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        );
-      }
-      return [...prev, { product, quantity: 1 }];
-    });
+  async function handleAddToCart(product) {
+    setCartFeedback("");
+    try {
+      const data = await addToCart(product.id);
+      setCartItems(normalizeCartItems(data.items));
+    } catch (err) {
+      setCartFeedback(err.message || "Nao foi possivel adicionar ao carrinho.");
+    }
   }
 
-  function handleUpdateQuantity(productId, delta) {
-    setCartItems((prev) =>
-      prev
-        .map((item) => {
-          if (item.product.id === productId) {
-            const newQty = item.quantity + delta;
-            return { ...item, quantity: newQty };
-          }
-          return item;
-        })
-        .filter((item) => item.quantity > 0)
-    );
+  async function handleUpdateQuantity(productId, delta) {
+    setCartFeedback("");
+    try {
+      const data = await updateCartItem(productId, delta);
+      setCartItems(normalizeCartItems(data.items));
+    } catch (err) {
+      setCartFeedback(err.message || "Nao foi possivel atualizar o carrinho.");
+    }
   }
 
-  function handleRemoveItem(productId) {
-    setCartItems((prev) => prev.filter((item) => item.product.id !== productId));
+  async function handleRemoveItem(productId) {
+    setCartFeedback("");
+    try {
+      const data = await removeCartItem(productId);
+      setCartItems(normalizeCartItems(data.items));
+    } catch (err) {
+      setCartFeedback(err.message || "Nao foi possivel remover o item.");
+    }
   }
 
   const cartItemsCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
@@ -94,6 +117,7 @@ export default function App() {
               onSearchChange={setSearchQuery}
               cartItemsCount={cartItemsCount}
               onAddToCart={handleAddToCart}
+              cartFeedback={cartFeedback}
             />
           }
         />
@@ -120,6 +144,7 @@ export default function App() {
               cartItems={cartItems}
               onUpdateQuantity={handleUpdateQuantity}
               onRemoveItem={handleRemoveItem}
+              cartFeedback={cartFeedback}
             />
           }
         />
@@ -135,6 +160,20 @@ export default function App() {
       </Routes>
     </Router>
   );
+}
+
+function normalizeCartItems(items = []) {
+  return items.map((item) => ({
+    product: {
+      id: item.id,
+      nome: item.nome,
+      descricao: item.descricao,
+      preco: item.preco,
+      categoria: item.categoria,
+      imagemUrl: item.imagemUrl
+    },
+    quantity: item.qty
+  }));
 }
 
 function LoginWrapper({ onLogin }) {

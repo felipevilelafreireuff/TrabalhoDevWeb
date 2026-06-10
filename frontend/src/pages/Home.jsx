@@ -15,7 +15,8 @@ export default function Home({
   searchQuery,
   onSearchChange,
   cartItemsCount,
-  onAddToCart
+  onAddToCart,
+  cartFeedback
 }) {
   const [categoria, setCategoria] = useState("todos");
   const [products, setProducts] = useState([]);
@@ -145,6 +146,7 @@ export default function Home({
             />
 
             <StatusMessage type="error">{error}</StatusMessage>
+            <StatusMessage type="error">{cartFeedback}</StatusMessage>
 
             {isLoading ? (
               <div className="empty-state">

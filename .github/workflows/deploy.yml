@@ -14,16 +14,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout 🛎️
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install and Build 🔧
+      - name: Install and build frontend
+        env:
+          VITE_BASE_PATH: /TrabalhoDevWeb/
+          VITE_API_BASE_URL: http://localhost:8080/devshop
         run: |
-          npm install
+          npm ci
           npm run build
         working-directory: frontend
 
-      - name: Deploy 🚀
+      - name: Deploy to gh-pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: frontend/dist

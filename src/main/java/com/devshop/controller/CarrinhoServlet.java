@@ -6,7 +6,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 
-import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -43,14 +42,8 @@ public class CarrinhoServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
-            throws ServletException, IOException {
-        
-        if (isJsonRequest(request) || "true".equals(request.getParameter("json"))) {
-            sendCartResponse(request, response);
-            return;
-        }
-        
-        request.getRequestDispatcher("/WEB-INF/views/carrinho.jsp").forward(request, response);
+            throws IOException {
+        sendCartResponse(request, response);
     }
     
     @Override
