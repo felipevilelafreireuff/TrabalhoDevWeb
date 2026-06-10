@@ -1,13 +1,22 @@
-# DevShop - Sistema Web MVC Seguro
+# DevShop - E-Commerce Desacoplado (React & Java Servlets)
 
-Este projeto é um mini e-commerce (DevShop) desenvolvido como requisito acadêmico para demonstrar a aplicação de uma **Arquitetura MVC** segura utilizando **Java Web (Servlets e JSP)**.
+Este projeto é um mini e-commerce (DevShop) refatorado para uma **Arquitetura Desacoplada** como requisito do segundo trabalho da disciplina.
 
-## 🏛️ Arquitetura MVC Implementada
+---
+
+## 🔗 Links da Aplicação
+- **Front-end Hospedado (GitHub Pages):** [https://felipevilelafreireuff.github.io/TrabalhoDevWeb/](https://felipevilelafreireuff.github.io/TrabalhoDevWeb/)
+- **Repositório GitHub:** [https://github.com/felipevilelafreireuff/TrabalhoDevWeb](https://github.com/felipevilelafreireuff/TrabalhoDevWeb)
+
+---
+
+## 🏛️ Arquitetura Desacoplada Implementada
 
 A separação de responsabilidades foi rigorosamente aplicada:
-- **Controller (Servlets):** Interceptam requisições HTTP (`/login`, `/admin`, `/index`), processam regras de negócio comunicando-se com o Model, e utilizam `RequestDispatcher.forward()` para despachar o resultado para as Views.
-- **Model (JavaBeans e DAOs):** O domínio é representado pelas classes `Produto` e `Usuario`. O acesso ao banco é isolado nas classes `ProdutoDAO` e `UsuarioDAO`, mantendo o Controller limpo.
-- **View (JSP):** O HTML final é renderizado no lado do servidor. Lógicas complexas foram removidas da interface. Os dados são iterados utilizando a biblioteca **JSTL** (`<c:forEach>`, `<c:out>`). O acesso direto às páginas `.jsp` foi bloqueado movendo-as para o diretório protegido `WEB-INF/views/`.
+- **Front-end (React + Vite):** Interface SPA dinâmica, modularizada em componentes reutilizáveis e hospedada no GitHub Pages.
+- **Back-end (Java Servlets API):** Servlets refatorados para atuar estritamente como uma API REST, recebendo e retornando dados estruturados no formato **JSON** (com suporte a CORS para integração com o front-end).
+- **Model (JavaBeans e DAOs):** O domínio é representado pelas classes `Produto` e `Usuario`. O acesso ao banco é isolado nas classes `ProdutoDAO` e `UsuarioDAO`, mantendo o controlador limpo.
+- **Comunicação Assíncrona:** A integração entre as camadas ocorre por meio de chamadas assíncronas utilizando a Fetch API (AJAX).
 
 ## 💾 Persistência e Armazenamento
 
@@ -62,6 +71,23 @@ mvn clean package cargo:run
 ./mvnw clean package cargo:run
 ```
 
-Aguarde o download das dependências e a inicialização do servidor. Assim que o terminal indicar que o Tomcat foi iniciado, acesse no seu navegador:
-
 👉 **http://localhost:8080/devshop**
+
+---
+
+## 🧪 Testes de API (Bruno Collection)
+
+A comunicação do Back-end (API Servlets) foi documentada e testada utilizando o **Bruno** (usebruno).
+A pasta [bruno/](file:///c:/Users/felip_x6n9d9e/OneDrive/Documentos/FELIPE/UFF/6_PERIODO/DEV_WEB/TrabDevWeb/bruno) contém as coleções prontas para execução:
+- **Autenticação (`devshop-auth`):**
+  - Login (POST `/login`)
+  - Logout (POST `/logout`)
+  - Status da Sessão (GET `/login`)
+- **Administração (`devshop-admin`):**
+  - Testes de endpoints administrativos.
+
+Para executar os testes:
+1. Abra o aplicativo **Bruno**.
+2. Clique em **Open Collection** na tela inicial.
+3. Selecione a pasta `bruno/devshop-auth` ou `bruno/devshop-admin` presente neste projeto.
+
