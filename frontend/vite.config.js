@@ -7,6 +7,7 @@ export default defineConfig(({ mode }) => {
   const backendContext = env.VITE_BACKEND_CONTEXT || "/DevShop";
 
   return {
+    base: mode === "production" ? "/TrabalhoDevWeb/" : "/",
     plugins: [react()],
     server: {
       port: 5173,
