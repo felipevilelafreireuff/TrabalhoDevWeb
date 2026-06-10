@@ -8,6 +8,10 @@ Este projeto é um mini e-commerce (DevShop) refatorado para uma **Arquitetura D
 - **Front-end Hospedado (GitHub Pages):** [https://felipevilelafreireuff.github.io/TrabalhoDevWeb/](https://felipevilelafreireuff.github.io/TrabalhoDevWeb/)
 - **Repositório GitHub:** [https://github.com/felipevilelafreireuff/TrabalhoDevWeb](https://github.com/felipevilelafreireuff/TrabalhoDevWeb)
 
+> [!NOTE]
+> **Sobre o Funcionamento do Front-end Hospedado (GitHub Pages):**
+> Como o GitHub Pages hospeda apenas arquivos estáticos e a API do back-end Java roda localmente, implementamos um mecanismo de **degradação suave (Graceful Degradation)**. Se a API de back-end estiver inacessível (como ao acessar diretamente o link do GitHub Pages), o front-end carregará automaticamente um catálogo de produtos simulado (Mock Data) de alta fidelidade para fins de demonstração, em vez de quebrar a interface ou exibir erros de carregamento. Quando executado localmente integrado com o servidor Java, a aplicação consome os dados dinâmicos do PostgreSQL em tempo real.
+
 ---
 
 ## 🏛️ Arquitetura Desacoplada Implementada
