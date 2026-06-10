@@ -16,7 +16,8 @@ import java.util.Set;
 public class CORSFilter implements Filter {
     private static final Set<String> ALLOWED_ORIGINS = Set.of(
             "http://localhost:5173",
-            "http://127.0.0.1:5173"
+            "http://127.0.0.1:5173",
+            "https://felipevilelafreireuff.github.io"
     );
 
     @Override
@@ -27,7 +28,7 @@ public class CORSFilter implements Filter {
         HttpServletResponse httpResponse = (HttpServletResponse) response;
         String origin = httpRequest.getHeader("Origin");
 
-        if (ALLOWED_ORIGINS.contains(origin)) {
+        if (origin != null && ALLOWED_ORIGINS.contains(origin)) {
             httpResponse.setHeader("Access-Control-Allow-Origin", origin);
             httpResponse.setHeader("Vary", "Origin");
             httpResponse.setHeader("Access-Control-Allow-Credentials", "true");

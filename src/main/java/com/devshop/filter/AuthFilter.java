@@ -14,7 +14,7 @@ import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 
-@WebFilter(urlPatterns = {"/admin/*"})
+@WebFilter(urlPatterns = {"/admin", "/admin/*"})
 public class AuthFilter implements Filter {
 
     @Override
@@ -32,10 +32,19 @@ public class AuthFilter implements Filter {
             if ("ADMIN".equals(usuario.getPapel())) {
                 chain.doFilter(request, response);
             } else {
-                httpResponse.sendRedirect(httpRequest.getContextPath() + "/");
+                writeJson(httpResponse, HttpServletResponse.SC_FORBIDDEN,
+                        "{\"success\":false,\"message\":\"Acesso restrito a administradores.\"}");
             }
         } else {
-            httpResponse.sendRedirect(httpRequest.getContextPath() + "/login");
+            writeJson(httpResponse, HttpServletResponse.SC_UNAUTHORIZED,
+                    "{\"success\":false,\"message\":\"Autenticacao obrigatoria.\"}");
         }
+    }
+
+    private void writeJson(HttpServletResponse response, int status, String body) throws IOException {
+        response.setStatus(status);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write(body);
     }
 }
